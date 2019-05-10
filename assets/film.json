@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Kolpaçino",
+    "year": "2015",
+    "genre": "Komedi",
+    "artist": "Şafak Sezer"
+  },
+  {
+    "name": "Çakallarla Dans",
+    "year": "2017",
+    "genre": "Komedi",
+    "artist": "İlker Ayrık"
+  },
+  {
+    "name": "Kurtlar Vadisi Irak",
+    "year": "2013",
+    "genre": "Aksiyon",
+    "artist": "Necati Şaşmaz"
+  },
+  {
+    "name": "Görevimiz Tehlike",
+    "year": "2017",
+    "genre": "Aksiyon",
+    "artist": "Artist Name"
+  }
+]
