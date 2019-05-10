@@ -1,6 +1,6 @@
-# Suggesty
+# suggesty
 
-An application suggests a movie at random or according to selected genre.
+A new Flutter project.
 
 ## Getting Started
 
