@@ -29,7 +29,7 @@ class FirstScreen extends StatelessWidget {
               },
             ),
             width: double.infinity,
-            height: MediaQuery.of(context).size.height / 4,
+            height: MediaQuery.of(context).size.height / 6,
           ),
           Container(
             padding: EdgeInsets.symmetric(vertical: 5),
@@ -47,7 +47,7 @@ class FirstScreen extends StatelessWidget {
               },
             ),
             width: double.infinity,
-            height: MediaQuery.of(context).size.height / 4,
+            height: MediaQuery.of(context).size.height / 6,
           ),
         ],
       ),

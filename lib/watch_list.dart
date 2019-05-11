@@ -11,6 +11,7 @@ class WatchList extends StatefulWidget {
 
 class _WatchListState extends State<WatchList> {
   List<Film> tumFilmler;
+  Icon favIcon = Icon(Icons.favorite,color: Colors.purple,);
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +28,23 @@ class _WatchListState extends State<WatchList> {
                 tumFilmler = sonuc.data;
 
                 return ListView.builder(
+
                     itemCount: tumFilmler.length,
                     itemBuilder: (context, index) {
                       return Card(
                         elevation: 2,
                         child: ListTile(
+                          onTap: (){
+                            },
+
                           leading: Icon(Icons.movie),
-                          title: Text(tumFilmler[index].name, style: TextStyle(fontSize: 18,color: Colors.purple),),
+                          title: Text(
+                            tumFilmler[index].name,
+                            style:
+                                TextStyle(fontSize: 18, color: Colors.purple),
+                          ),
                           subtitle: Text(tumFilmler[index].genre),
-                          trailing: Icon(Icons.favorite_border),
+                          trailing: favIcon,
                         ),
                       );
                     });
