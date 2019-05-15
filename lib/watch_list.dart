@@ -19,52 +19,7 @@ class _WatchListState extends State<WatchList> {
       appBar: AppBar(
         title: Text("WATCH LIST"),
       ),
-      body: Center(
-        child: Container(
-          child: FutureBuilder(
-            future: veriKaynaginiOku(),
-            builder: (context, sonuc) {
-              if (sonuc.hasData) {
-                tumFilmler = sonuc.data;
-
-                return ListView.builder(
-
-                    itemCount: tumFilmler.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        elevation: 2,
-                        child: ListTile(
-                          onTap: (){
-                            },
-
-                          leading: Icon(Icons.movie),
-                          title: Text(
-                            tumFilmler[index].name,
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.purple),
-                          ),
-                          subtitle: Text(tumFilmler[index].genre),
-                          trailing: favIcon,
-                        ),
-                      );
-                    });
-              }
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<List> veriKaynaginiOku() async {
-    var gelenVeri =
-        await DefaultAssetBundle.of(context).loadString(("assets/film.json"));
-
-    List<Film> filmlerListesi =
-        (json.decode(gelenVeri) as List).map((mapYapisi) {
-      return Film.fromJsonMap(mapYapisi);
-    }).toList();
-
-    return filmlerListesi;
-  }
+      body: Center(child: Text("WATCH LIST PAGE!"),)
+    );}
 }
+

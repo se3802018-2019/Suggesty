@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class FirstScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,6 @@ class FirstScreen extends StatelessWidget {
               color: Colors.pinkAccent,
               onPressed: () {
                 Navigator.pushNamed(context, "/suggestMovie");
-
               },
             ),
             width: double.infinity,

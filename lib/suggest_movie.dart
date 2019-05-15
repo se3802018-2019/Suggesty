@@ -7,7 +7,7 @@ class SuggestScreen extends StatefulWidget {
 
 class _SuggestScreenState extends State<SuggestScreen> {
   String secilenTur;
-  String secilenRadio;
+  String secilenRadio="Rastgele";
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +23,7 @@ class _SuggestScreenState extends State<SuggestScreen> {
             children: <Widget>[
               Expanded(
                 child: RadioListTile(
+                  selected: true,
                   activeColor: Colors.purple,
                   title: Text(
                     "Rastgele",
@@ -113,7 +114,15 @@ class _SuggestScreenState extends State<SuggestScreen> {
                     "SUGGEST",
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+
+                    if(secilenRadio == "Rastgele"){
+                    Navigator.pushNamed(context, "/suggestMovie/imdbApi");
+                    }else if( secilenRadio == "TüreGöre"){
+                      print("TÜRE GÖRE SEÇİM YAPILD!");
+                    }
+
+                  },
                 ),
               ),
             ],
