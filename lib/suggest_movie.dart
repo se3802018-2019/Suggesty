@@ -7,7 +7,7 @@ class SuggestScreen extends StatefulWidget {
 
 class _SuggestScreenState extends State<SuggestScreen> {
   String secilenTur;
-  String secilenRadio="Rastgele";
+  String secilenRadio="Random";
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +25,10 @@ class _SuggestScreenState extends State<SuggestScreen> {
                 child: RadioListTile(
                   activeColor: Colors.purple,
                   title: Text(
-                    "Rastgele",
+                    "Random",
                     style: TextStyle(fontSize: 20),
                   ),
-                  value: "Rastgele",
+                  value: "Random",
                   groupValue: secilenRadio,
                   onChanged: (secim) {
                     setState(() {
@@ -42,10 +42,10 @@ class _SuggestScreenState extends State<SuggestScreen> {
                 child: RadioListTile(
                   activeColor: Colors.purple,
                   title: Text(
-                    "Türe Göre",
+                    "Genre",
                     style: TextStyle(fontSize: 20),
                   ),
-                  value: "TüreGöre",
+                  value: "Genre",
                   groupValue: secilenRadio,
                   onChanged: (secim) {
                     setState(() {
@@ -66,24 +66,24 @@ class _SuggestScreenState extends State<SuggestScreen> {
                   items: [
                     DropdownMenuItem(
                       child: Text(
-                        "Komedi",
+                        "Comedy",
                         style: TextStyle(fontSize: 20),
                       ),
-                      value: "Komedi",
+                      value: "Comedy",
                     ),
                     DropdownMenuItem(
                       child: Text(
-                        "Korku",
+                        "Horror",
                         style: TextStyle(fontSize: 20),
                       ),
-                      value: "Korku",
+                      value: "Horror",
                     ),
                     DropdownMenuItem(
                       child: Text(
-                        "Aksiyon",
+                        "Action",
                         style: TextStyle(fontSize: 20),
                       ),
-                      value: "Aksiyon",
+                      value: "Action",
                     ),
                   ],
                   onChanged: (value) {
@@ -93,7 +93,7 @@ class _SuggestScreenState extends State<SuggestScreen> {
                     });
                   },
                   hint: Text(
-                    "Bir Tür Seçin",
+                    "Choose a Genre",
                     style: TextStyle(fontSize: 20),
                   ),
                   value: secilenTur,
@@ -115,7 +115,7 @@ class _SuggestScreenState extends State<SuggestScreen> {
                   ),
                   onPressed: () {
 
-                    if(secilenRadio == "Rastgele"){
+                    if(secilenRadio == "Random"){
                     Navigator.pushNamed(context, "/suggestMovie/imdbApi");
                     }else if( secilenRadio == "TüreGöre"){
                       print("TÜRE GÖRE SEÇİM YAPILD!");
