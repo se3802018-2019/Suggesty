@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:async';
 
-import 'package:suggesty/model/Film.dart';
 
 class WatchList extends StatefulWidget {
   @override
@@ -10,7 +9,6 @@ class WatchList extends StatefulWidget {
 }
 
 class _WatchListState extends State<WatchList> {
-  List<Film> tumFilmler;
   Icon favIcon = Icon(Icons.favorite,color: Colors.purple,);
 
   @override

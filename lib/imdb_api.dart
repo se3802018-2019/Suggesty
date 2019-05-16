@@ -1,346 +1,189 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:suggesty/model/Film.dart';
 import 'dart:math';
 
-class ImdbAPI extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:suggesty/model/MovieDetails.dart';
+import 'package:suggesty/model/movie.dart';
+
+
+class TmdbAPI extends StatefulWidget {
   @override
-  _ImdbAPIState createState() => _ImdbAPIState();
+  _TmdbAPIState createState() => _TmdbAPIState();
 }
 
-class _ImdbAPIState extends State<ImdbAPI> {
-  String url =
-      "http://www.omdbapi.com/?apikey=2ff51865&i=tt005"; //68646  +5 haneli bir sayi ekle
-  Film film;
-  Future<Film> veri;
+class _TmdbAPIState extends State<TmdbAPI> {
+  String url;
+  String urlDetail;
+
+  Movie movie;
+  MovieDetails movieDetails;
+  Future<MovieDetails> detailVeri;
   List<String> splittedList;
-  String splitThisString;
-
-  Future<Film> filmGetir() async {
-    var respone = await http.get(url);
-    var decodedJson = json.decode(respone.body);
-
-    film = Film.fromJson(decodedJson);
-
-    return film;
-  }
+  int movID = 1;
+  int pageNum = 1;
+  int detailID = 1;
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    url += _urlCreator();
-    print("NEW URL>>>>> $url");
-    setState(() {
-      veri = filmGetir().catchError((error) {
-        print("HATA >>>>!!!! $error");
-      });
-      // TODO: implement initState
-    });
+
+    print("RANDOM pageNUM=> ${pageNum.toString()}");
+
+    detailVeri = getMovies();
+  }
+
+  Future<MovieDetails> getMovies() async {
+    var random = new Random();
+    pageNum = random.nextInt(50);
+    movID = random.nextInt(19);
+    url =
+    "https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${pageNum.toString()}";
+
+    var response = await http.get(url);
+    var decodedJson = json.decode(response.body);
+    movie = await Movie.fromJson(decodedJson);
+
+    detailID = movie.results[movID].id;
+    urlDetail =
+    "https://api.themoviedb.org/3/movie/${detailID.toString()}?api_key=2050b4781551574ea11b686357c54ca3&language=en-US";
+
+    var responseDetail = await http.get(urlDetail);
+    var decodedDetailsJson = json.decode(responseDetail.body);
+    movieDetails = MovieDetails.fromJson(decodedDetailsJson);
+
+    return movieDetails;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("SUGGESTION"),
+          title: Text("SUGGESTY"),
         ),
         body: FutureBuilder(
-          future: veri,
-          builder: (context, AsyncSnapshot<Film> gelenFilm) {
-            if (gelenFilm.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (gelenFilm.connectionState == ConnectionState.done) {
-              return CustomScrollView(slivers: <Widget>[
-                SliverAppBar(
-                  //title: Text("Sliver APP Bar", style: TextStyle(color: Colors.red,),),
-                  backgroundColor: Colors.pink,
-                  expandedHeight: 300,
-                  floating: false,
-                  //scroll işlemi tam olarak bitmeden app bar görünmeye başlar.
-                  snap: false,
-                  // floating ile birlikte true kullanılmalı!!! Sayfanın en altından üste doğru scroll hareketine başlandığı anda app bar aşşağıya doğru tamamen açılıyor.
-                  pinned: true,
-                  // app bar kapandıktan sonra banner gibi üstte görünmeye devam eder
-                  flexibleSpace: FlexibleSpaceBar(
-                    title: Text(gelenFilm.data.title),
-                    centerTitle: true,
-                    background: Image.network(
-                      gelenFilm.data.poster != "N/A"
-                          ? gelenFilm.data.poster
-                          : "https://dwsinc.co/wp-content/uploads/2018/05/image-not-found.jpg",
-                      fit: BoxFit.fill,
+            future: detailVeri,
+            builder: (context, AsyncSnapshot<MovieDetails> movie) {
+              if (movie.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (movie.connectionState == ConnectionState.done) {
+                // print(movie.data.results[0].toString());
+                print("________******__________");
+                print(movie.data.toString());
+                return CustomScrollView(slivers: <Widget>[
+                  SliverAppBar(
+                    //title: Text("Sliver APP Bar", style: TextStyle(color: Colors.red,),),
+                    backgroundColor: Colors.pink,
+                    expandedHeight: 300,
+                    floating: false,
+                    //scroll işlemi tam olarak bitmeden app bar görünmeye başlar.
+                    snap: false,
+                    // floating ile birlikte true kullanılmalı!!! Sayfanın en altından üste doğru scroll hareketine başlandığı anda app bar aşşağıya doğru tamamen açılıyor.
+                    pinned: true,
+                    // app bar kapandıktan sonra banner gibi üstte görünmeye devam eder
+                    flexibleSpace: FlexibleSpaceBar(
+                      title: Container(
+                          color: Colors.pink.withOpacity(0.6),
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            movie.data.title,
+                            style: TextStyle(color: Colors.white),
+                          )),
+                      centerTitle: true,
+                      background: Image.network(
+                        movie.data.posterPath != null
+                            ? "https://image.tmdb.org/t/p/w500${movie.data.posterPath}"
+                            : "https://hybrismart.com/wp-content/uploads/2018/04/symbol-error.png",
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
-                ),
-                SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1),
-                  // satırda gösterilecek eleman sayısı
-                  delegate: SliverChildListDelegate([      Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Text(
-                              gelenFilm.data.imdbRating != "N/A"
-                                  ? "Imdb : " +  gelenFilm.data.imdbRating
-                                  : "NO RATING",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.pink),
-                            ),
-                            Text(
-                              gelenFilm.data.runtime != "N/A" ? gelenFilm.data.runtime : "NO TIME",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.pink),
-                            ),
-                            Text(
-                              gelenFilm.data.released != "N/A" ? gelenFilm.data.released : "NO YEAR",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.pink),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Text(
-                            gelenFilm.data.country != "N/A" ? gelenFilm.data.country : "NO COUNTRY",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.purple),
-                          ),
-                          Text(
-                            gelenFilm.data.language != "N/A" ? gelenFilm.data.language : "NO LANG",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.purple),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        color: Colors.pink,
-                        padding: EdgeInsets.all(5),
-                        child: Text(
-                          "Actors",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: _splitString(gelenFilm.data.actors)
-                                .map((writer) => Chip(
-                              elevation: 2,
-                              backgroundColor: Colors.purple,
-                              label: Text(
-                                writer,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ))
-                                .toList(),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        color: Colors.pink,
-                        padding: EdgeInsets.all(5),
-                        child: Text(
-                          "Genre",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: _splitString(gelenFilm.data.genre)
-                                .map((writer) => Chip(
-                              elevation: 2,
-                              backgroundColor: Colors.purple,
-                              label: Text(
-                                writer,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ))
-                                .toList(),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        color: Colors.pink,
-                        padding: EdgeInsets.all(5),
-                        child: Text(
-                          "Writers",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: _splitString(gelenFilm.data.writer)
-                                .map((writer) => Chip(
-                              elevation: 2,
-                              backgroundColor: Colors.purple,
-                              label: Text(
-                                writer,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ))
-                                .toList(),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        color: Colors.pink,
-                        padding: EdgeInsets.all(5),
-                        child: Text(
-                          "Directors",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: _splitString(gelenFilm.data.director)
-                                .map((writer) => Chip(
-                              elevation: 2,
-                              backgroundColor: Colors.purple,
-                              label: Text(
-                                writer,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ))
-                                .toList(),
-                          ),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          RaisedButton(
-                            splashColor: Colors.purple,
-                            child: Text("I DID NOT LIKE IT",
-                                style: TextStyle(
-                                    color: Colors.white, fontWeight: FontWeight.bold)),
-                            color: Colors.red,
-                            onPressed: () {
-
-                            },
-                            elevation: 1,
-                          ),
-                          RaisedButton(
-                            splashColor: Colors.purple,
-                            child: Text("ADD WATCH LIST",
-                                style: TextStyle(
-                                    color: Colors.white, fontWeight: FontWeight.bold)),
-                            color: Colors.green,
-                            onPressed: () {},
-                            elevation: 1,
-                          ),
-                        ],
-                      )
-                    ],
-                  ),]),
-                )
-              ]);
-            }
-          },
-        ));
+                  SliverPadding(
+                    padding: EdgeInsets.all(2),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate(
+                          sabitListeElemanlari(movieDetails)),
+                    ),
+                  ),
+                ]);
+              }
+            }));
   }
 
-  List<Widget> sabitListeElemanlari(String listeTuru) {
+  List<Widget> sabitListeElemanlari(MovieDetails mov) {
     return [
 
+      Container(
+        width: 200,
+        child: Center(
+          child: Text(
+            mov.overview,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 15,
+            softWrap: true,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      Container(
+        height: 80,
+        color: Colors.pink.shade500,
+        alignment: Alignment.center,
+        child: Text(
+          "Avg Point: " + mov.voteAverage.toString(),
+          style: TextStyle(
+              fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      Container(
+        height: 80,
+        color: Colors.white,
+        alignment: Alignment.center,
+        child: Text(
+          "Duration: " + mov.runtime.toString()+" mins",
+          style: TextStyle(
+              fontSize: 25, color: Colors.purple, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      Container(
+        height: 80,
+        color: Colors.pink.shade500,
+        alignment: Alignment.center,
+        child: Text(
+          "Language: " + mov.spokenLanguages[0].name.toString(),
+          style: TextStyle(
+              fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      Container(
+        height: 80,
+        color: Colors.white,
+        alignment: Alignment.center,
+        child: Text(
+          "Released: " + mov.releaseDate.toIso8601String().substring(0, 10),
+          style: TextStyle(
+              fontSize: 25, color: Colors.purple, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      Container(
+        height: 80,
+        color: Colors.pink.shade500,
+        alignment: Alignment.center,
+        child: Text(
+          "Genre: " + mov.genres[0].name,
+          style: TextStyle(
+              fontSize: 25, color: Colors.white,fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ),
+
     ];
-  }
-
-  List<String> _splitString(String splitThisString) {
-    splittedList = splitThisString.split(",");
-
-    return splittedList;
-  }
-
-  String _urlCreator() {
-    String randomNumber = "";
-    int returnedN = _randomDigit();
-
-    for (int i = 0; i < 5; i++) {
-      randomNumber += _randomDigit().toString();
-      print(_randomDigit().toString());
-    }
-
-    print("RANDOM NUMBER==>> " + randomNumber);
-
-    return randomNumber;
-  }
-
-  int _randomDigit() {
-    var random = new Random();
-    return random.nextInt(10);
   }
 }

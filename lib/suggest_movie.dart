@@ -23,7 +23,6 @@ class _SuggestScreenState extends State<SuggestScreen> {
             children: <Widget>[
               Expanded(
                 child: RadioListTile(
-                  selected: true,
                   activeColor: Colors.purple,
                   title: Text(
                     "Rastgele",

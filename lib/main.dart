@@ -10,7 +10,7 @@ void main() => runApp(MaterialApp(
     "/": (context) => FirstScreen(),
     "/watchList": (context) => WatchList(),
     "/suggestMovie": (context) => SuggestScreen(),
-    "/suggestMovie/imdbApi": (context) => ImdbAPI(),
+    "/suggestMovie/imdbApi": (context) => TmdbAPI(),
   },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
