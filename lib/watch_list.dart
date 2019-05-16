@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:suggesty/imagePage.dart';
 import 'dart:convert';
 import 'dart:async';
 
@@ -12,11 +13,14 @@ class WatchList extends StatefulWidget {
 }
 
 class _WatchListState extends State<WatchList> {
+  var scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+       key: scaffoldKey,
         appBar: AppBar(
-          title: Text("WATCH LIST"),
+          title: Text("WATCHLIST"),
         ),
         body: _buildBody(context));
   }
@@ -52,15 +56,37 @@ class _WatchListState extends State<WatchList> {
       elevation: 2,
       child: ListTile(
         onTap: () {
-          print("Deleted");
+          print("DETAILS?");
+
         },
         title: Text(movieFirebase.title,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-        leading: CircleAvatar(
-          backgroundColor: Colors.pink,
-          backgroundImage: NetworkImage(movieFirebase.picture),
-          radius: 30,
+        leading: InkWell(
+          onTap: (){
+            print("image clicked");
+            Navigator.of(context).push((MaterialPageRoute(builder: (context)=> ImagePage( imgPath:movieFirebase.picture))));
+          },
+
+            child: CircleAvatar(
+              backgroundColor: Colors.pink,
+              backgroundImage: NetworkImage(movieFirebase.picture),
+              radius: 30,
+            ),
+
         ),
-        trailing: Icon(Icons.remove_circle,color: Colors.pink,size: 25,),
+        trailing: GestureDetector(
+          child: Icon(Icons.remove_circle,color: Colors.pink,size: 25,),
+          onTap: (){
+            data.reference.delete();
+
+            scaffoldKey.currentState.showSnackBar(SnackBar(
+              content: Text(movieFirebase.title+" Deleted!", textAlign: TextAlign.center,),
+              duration: Duration(seconds: 3),backgroundColor: Colors.purple,
+            ));
+
+            print("Deleted");
+
+          },
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,

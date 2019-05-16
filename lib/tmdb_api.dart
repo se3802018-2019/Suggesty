@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:suggesty/model/MovieDetails.dart';
 import 'package:suggesty/model/movie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:toast/toast.dart';
 
 class TmdbAPI extends StatefulWidget {
   @override
@@ -14,6 +15,8 @@ class TmdbAPI extends StatefulWidget {
 }
 
 class _TmdbAPIState extends State<TmdbAPI> {
+
+
   String url;
   String urlDetail;
   Movie movie;
@@ -31,7 +34,6 @@ class _TmdbAPIState extends State<TmdbAPI> {
     // TODO: implement initState
     super.initState();
     detailVeri = getMovies();
-
   }
 
   Future<MovieDetails> getMovies() async {
@@ -58,6 +60,8 @@ class _TmdbAPIState extends State<TmdbAPI> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
         appBar: AppBar(
           title: Text("SUGGESTY"),
@@ -67,7 +71,11 @@ class _TmdbAPIState extends State<TmdbAPI> {
             builder: (context, AsyncSnapshot<MovieDetails> movie) {
               if (movie.connectionState == ConnectionState.waiting) {
                 return Center(
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.pink,),),
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.pink,
+                    ),
+                  ),
                 );
               } else if (movie.connectionState == ConnectionState.done) {
                 // print(movie.data.results[0].toString());
@@ -90,7 +98,7 @@ class _TmdbAPIState extends State<TmdbAPI> {
                           padding: EdgeInsets.all(2),
                           child: Text(
                             movie.data.title,
-                            style: TextStyle(color: Colors.white,fontSize: 14),
+                            style: TextStyle(color: Colors.white, fontSize: 14),
                           )),
                       centerTitle: true,
                       background: Image.network(
@@ -105,39 +113,55 @@ class _TmdbAPIState extends State<TmdbAPI> {
                     padding: EdgeInsets.all(2),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate(
-                          sabitListeElemanlari(movieDetails)),
+                          sabitListeElemanlari(movieDetails,context)),
                     ),
                   ),
                 ]);
               }
             }));
   }
+
+
+}
+void showToast(BuildContext context, String msg, {int duration, int gravity,}) {
+  Toast.show(msg, context, duration: 3, gravity: 10, textColor: Colors.white, backgroundColor: Colors.purple,);
 }
 
-List<Widget> sabitListeElemanlari(MovieDetails mov) {
+
+List<Widget> sabitListeElemanlari(MovieDetails mov,BuildContext context) {
   return [
     GestureDetector(
-      onTap: (){
+      onTap: () {
         print("WATCHLIST EKLE");
 
 
-        Firestore.instance.collection("movie").add({"title": "${mov.originalTitle}", "duration":"${mov.runtime}", "genre": "${mov.genres[0].name.toString()}", "picture": "https://image.tmdb.org/t/p/w500${mov.posterPath}"});
+        Firestore.instance.collection("movie").add({
+          "title": "${mov.originalTitle}",
+          "duration": "${mov.runtime}",
+          "genre": "${mov.genres[0].name.toString()}",
+          "picture": "https://image.tmdb.org/t/p/w500${mov.posterPath}"
+        });
 
-
-        
+        showToast(context,"Added Successfuly!");
       },
       child: Container(
         width: double.infinity,
         height: 80,
         color: Colors.purple,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[Text("Add to Watchlist",style: TextStyle(color:Colors.white,fontSize: 20,fontWeight: FontWeight.bold),)],
-          ),
-
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "Add to Watchlist",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            )
+          ],
         ),
+      ),
     ),
-
     SizedBox(
       height: 5,
     ),
