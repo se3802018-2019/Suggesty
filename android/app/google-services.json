@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "302834568637",
+    "firebase_url": "https://emresuggesty.firebaseio.com",
+    "project_id": "emresuggesty",
+    "storage_bucket": "emresuggesty.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302834568637:android:15972af72da6c7ec",
+        "android_client_info": {
+          "package_name": "com.example.suggesty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "302834568637-evpurbgoi98euhfsumqdfp6f6m7d7dce.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOeb2TUqV_SZN9dBEEQY1xA63pWknGeIA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "302834568637-evpurbgoi98euhfsumqdfp6f6m7d7dce.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

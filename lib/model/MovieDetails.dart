@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 MovieDetails movieDetailsFromJson(String str) => MovieDetails.fromJson(json.decode(str));
 
 String movieDetailsToJson(MovieDetails data) => json.encode(data.toJson());
@@ -123,6 +125,9 @@ class MovieDetails {
   String toString() {
     return 'MovieDetails{genres: $genres, id: $id, imdbId: $imdbId, originalTitle: $originalTitle, overview: $overview, posterPath: $posterPath}';
   }
+
+
+
 }
 
 class Genre {
