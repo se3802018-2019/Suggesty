@@ -5,6 +5,8 @@ import 'dart:async';
 import 'dart:convert';
 
 class SuggestScreen extends StatefulWidget {
+  static String radioVal;
+  static String genreVal;
   @override
   _SuggestScreenState createState() => _SuggestScreenState();
 }
@@ -14,6 +16,7 @@ class _SuggestScreenState extends State<SuggestScreen> {
   String radioValue = "Random";
   String urlGenre;
   Genre genreObj;
+
   Future<Genre> genreData;
 
   Future<Genre> getGenres() async {
@@ -24,6 +27,8 @@ class _SuggestScreenState extends State<SuggestScreen> {
     var decodedJson = json.decode(response.body);
     genreObj = await Genre.fromJson(decodedJson);
 
+
+
     return genreObj;
   }
 
@@ -31,7 +36,7 @@ class _SuggestScreenState extends State<SuggestScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    SuggestScreen.radioVal="Random";
     genreData = getGenres();
   }
 
@@ -58,6 +63,7 @@ class _SuggestScreenState extends State<SuggestScreen> {
                   onChanged: (secim) {
                     setState(() {
                       radioValue = secim;
+                      SuggestScreen.radioVal=secim;
                       print(secim);
                     });
                   },
@@ -74,7 +80,10 @@ class _SuggestScreenState extends State<SuggestScreen> {
                   groupValue: radioValue,
                   onChanged: (secim) {
                     setState(() {
+                      SuggestScreen.radioVal=secim;
                       radioValue = secim;
+                      print("static radioVal => " +SuggestScreen.radioVal);
+
                       print(secim);
                     });
                   },
@@ -101,6 +110,7 @@ class _SuggestScreenState extends State<SuggestScreen> {
                         );
                       } else if (snapGenre.connectionState ==
                           ConnectionState.done) {
+
                         snapGenre.data.genres.map((map) {
                           print("MAP: " + map.name);
                         });
@@ -110,9 +120,16 @@ class _SuggestScreenState extends State<SuggestScreen> {
                             " *************--**-*");
 
                         return DropdownButton(
+                          hint: Text("Choose a Genre"),
                           value: genreValue,
                             onChanged: (genre) {
                               print("SEÇİLEN ITEM => " +genre.toString());
+                              SuggestScreen.genreVal=genre.toString();
+                              print("static genreVal => " +SuggestScreen.genreVal);
+                              setState(() {
+                                genreValue = genre;
+
+                              });
                             },
                             items: snapGenre.data.genres
                                 .map((map) => DropdownMenuItem(
@@ -139,10 +156,15 @@ class _SuggestScreenState extends State<SuggestScreen> {
                   ),
                   onPressed: () {
                     if (radioValue == "Random") {
+
                       Navigator.pushNamed(context, "/suggestMovie/imdbApi");
-                    } else if (radioValue == "TüreGöre") {
+                    } else if (radioValue == "Genre") {
+
                       print("TÜRE GÖRE SEÇİM YAPILD!");
+                      Navigator.pushNamed(context, "/suggestMovie/imdbApi");
+
                     }
+
                   },
                 ),
               ),
@@ -153,10 +175,4 @@ class _SuggestScreenState extends State<SuggestScreen> {
     );
   }
 
-  DropdownMenuItem _dropMenuItemBuilder(
-      BuildContext context, AsyncSnapshot<Genre> genre) {
-    return DropdownMenuItem(
-      child: Text("item"),
-    );
-  }
 }

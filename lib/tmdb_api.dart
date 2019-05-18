@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:suggesty/model/MovieDetails.dart';
 import 'package:suggesty/model/movie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:suggesty/suggest_movie.dart';
 import 'package:toast/toast.dart';
 
 class TmdbAPI extends StatefulWidget {
@@ -30,14 +31,36 @@ class _TmdbAPIState extends State<TmdbAPI> {
     // TODO: implement initState
     super.initState();
     detailVeri = getMovies();
+    SuggestScreen.genreVal;
   }
 
   Future<MovieDetails> getMovies() async {
     var random = new Random();
-    pageNum = random.nextInt(50);
+
+    if(SuggestScreen.radioVal=="Random"){
+
+      pageNum = random.nextInt(50);
+      url =
+      "https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${pageNum.toString()}";
+
+
+    }else if(SuggestScreen.radioVal == "Genre"){
+
+    if(SuggestScreen.genreVal != null){
+
+      url="https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${SuggestScreen.genreVal}";
+
+
+      print('GENRE ID==>>> ' + SuggestScreen.genreVal);
+    }
+
+
+
+    }else{
+      print("radioVal değerine ulaşılamadı");
+    }
+
     movID = random.nextInt(19);
-    url =
-        "https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${pageNum.toString()}";
 
     var response = await http.get(url);
     var decodedJson = json.decode(response.body);
@@ -45,11 +68,14 @@ class _TmdbAPIState extends State<TmdbAPI> {
 
     detailID = movie.results[movID].id;
     urlDetail =
-        "https://api.themoviedb.org/3/movie/${detailID.toString()}?api_key=2050b4781551574ea11b686357c54ca3&language=en-US";
+    "https://api.themoviedb.org/3/movie/${detailID.toString()}?api_key=2050b4781551574ea11b686357c54ca3&language=en-US";
 
     var responseDetail = await http.get(urlDetail);
     var decodedDetailsJson = json.decode(responseDetail.body);
     movieDetails = MovieDetails.fromJson(decodedDetailsJson);
+
+
+
 
     return movieDetails;
   }
@@ -92,8 +118,11 @@ class _TmdbAPIState extends State<TmdbAPI> {
                           padding: EdgeInsets.all(2),
                           child: Text(
                             movie.data.title,
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                          )),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                            softWrap: true,
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          ),),
                       centerTitle: true,
                       background: Image.network(
                         movie.data.posterPath != null
@@ -148,22 +177,14 @@ List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
         showToast(context, "Added Successfuly!");
       },
       child: Container(
-        width: double.infinity,
-        height: 80,
-        color: Colors.purple,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Add to Watchlist",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            )
-          ],
-        ),
-      ),
+          color: Colors.purple,
+          child: ListTile(
+              title: Text(
+                "Add to Watchlist",
+                style: TextStyle(color: Colors.white),
+              ),
+              leading: Icon(Icons.live_tv,color: Colors.white,),
+              trailing: Icon(Icons.add,color: Colors.white,))),
     ),
     SizedBox(
       height: 5,
@@ -176,7 +197,7 @@ List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
           overflow: TextOverflow.ellipsis,
           maxLines: 15,
           softWrap: true,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle( fontWeight: FontWeight.bold),
         ),
       ),
     ),
@@ -184,58 +205,63 @@ List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
       height: 5,
     ),
     Container(
-      height: 80,
       color: Colors.pink.shade500,
       alignment: Alignment.center,
-      child: Text(
-        "Avg Point: " + mov.voteAverage.toString(),
-        style: TextStyle(
-            fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-        textAlign: TextAlign.center,
+      child: ListTile(
+        title: Text(
+          "Avg Point: " + mov.voteAverage.toString(),
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
       ),
     ),
     Container(
-      height: 80,
       color: Colors.white,
       alignment: Alignment.center,
-      child: Text(
-        "Duration: " + mov.runtime.toString() + " mins",
-        style: TextStyle(
-            fontSize: 20, color: Colors.purple, fontWeight: FontWeight.bold),
-        textAlign: TextAlign.center,
+      child: ListTile(
+        title: Text(
+          "Duration: " + mov.runtime.toString() + " mins",
+          style: TextStyle(
+               color: Colors.purple, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
       ),
     ),
     Container(
-      height: 80,
       color: Colors.pink.shade500,
       alignment: Alignment.center,
-      child: Text(
-        "Language: " + mov.spokenLanguages[0].name.toString(),
-        style: TextStyle(
-            fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-        textAlign: TextAlign.center,
+      child: ListTile(
+        title: Text(
+          "Language: " + mov.spokenLanguages[0].name.toString(),
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
       ),
     ),
     Container(
-      height: 80,
       color: Colors.white,
       alignment: Alignment.center,
-      child: Text(
-        "Released: " + mov.releaseDate.toIso8601String().substring(0, 10),
-        style: TextStyle(
-            fontSize: 20, color: Colors.purple, fontWeight: FontWeight.bold),
-        textAlign: TextAlign.center,
+      child: ListTile(
+        title: Text(
+          "Released: " + mov.releaseDate.toIso8601String().substring(0, 10),
+          style: TextStyle(
+               color: Colors.purple, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
       ),
     ),
     Container(
-      height: 80,
       color: Colors.pink.shade500,
       alignment: Alignment.center,
-      child: Text(
-        "Genre: " + mov.genres[0].name,
-        style: TextStyle(
-            fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-        textAlign: TextAlign.center,
+      child: ListTile(
+        title: Text(
+          "Genre: " + mov.genres[0].name,
+          style: TextStyle(
+               color: Colors.white, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
       ),
     ),
   ];
