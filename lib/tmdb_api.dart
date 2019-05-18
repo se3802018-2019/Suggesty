@@ -15,15 +15,11 @@ class TmdbAPI extends StatefulWidget {
 }
 
 class _TmdbAPIState extends State<TmdbAPI> {
-
-
   String url;
   String urlDetail;
   Movie movie;
   MovieDetails movieDetails;
   Future<MovieDetails> detailVeri;
-  Stream<DocumentSnapshot> _counterStream;
-
   List<String> splittedList;
   int movID = 1;
   int pageNum = 1;
@@ -60,8 +56,6 @@ class _TmdbAPIState extends State<TmdbAPI> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
         appBar: AppBar(
           title: Text("SUGGESTY"),
@@ -113,27 +107,36 @@ class _TmdbAPIState extends State<TmdbAPI> {
                     padding: EdgeInsets.all(2),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate(
-                          sabitListeElemanlari(movieDetails,context)),
+                          sabitListeElemanlari(movieDetails, context)),
                     ),
                   ),
                 ]);
               }
             }));
   }
-
-
-}
-void showToast(BuildContext context, String msg, {int duration, int gravity,}) {
-  Toast.show(msg, context, duration: 3, gravity: 10, textColor: Colors.white, backgroundColor: Colors.purple,);
 }
 
+void showToast(
+  BuildContext context,
+  String msg, {
+  int duration,
+  int gravity,
+}) {
+  Toast.show(
+    msg,
+    context,
+    duration: 3,
+    gravity: 10,
+    textColor: Colors.white,
+    backgroundColor: Colors.purple,
+  );
+}
 
-List<Widget> sabitListeElemanlari(MovieDetails mov,BuildContext context) {
+List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
   return [
     GestureDetector(
       onTap: () {
         print("WATCHLIST EKLE");
-
 
         Firestore.instance.collection("movie").add({
           "title": "${mov.originalTitle}",
@@ -142,7 +145,7 @@ List<Widget> sabitListeElemanlari(MovieDetails mov,BuildContext context) {
           "picture": "https://image.tmdb.org/t/p/w500${mov.posterPath}"
         });
 
-        showToast(context,"Added Successfuly!");
+        showToast(context, "Added Successfuly!");
       },
       child: Container(
         width: double.infinity,

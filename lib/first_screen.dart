@@ -33,7 +33,7 @@ class FirstScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 5),
             child: RaisedButton(
               child: Text(
-                "WATCH LIST",
+                "WATCHLIST",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
