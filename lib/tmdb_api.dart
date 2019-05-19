@@ -31,32 +31,40 @@ class _TmdbAPIState extends State<TmdbAPI> {
     // TODO: implement initState
     super.initState();
     detailVeri = getMovies();
-    SuggestScreen.genreVal;
   }
 
   Future<MovieDetails> getMovies() async {
     var random = new Random();
-
-    if(SuggestScreen.radioVal=="Random"){
-
+    if (SuggestScreen.radioVal == "Random") {
       pageNum = random.nextInt(50);
       url =
-      "https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${pageNum.toString()}";
+          "https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${pageNum.toString()}";
+    } else if (SuggestScreen.radioVal == "Genre") {
+      if (SuggestScreen.genreVal != null &&
+          SuggestScreen.genreVal != "Choose a Genre" &&
+          SuggestScreen.yearVal != null &&
+          SuggestScreen.yearVal != "Choose a Year") {
+        //genre and year selected
 
+        url =
+            "https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${pageNum.toString()}&with_genres=${SuggestScreen.genreVal}&year=${SuggestScreen.yearVal}";
+        print(
+            "GENRE ${SuggestScreen.genreVal} AND YEAR SELECTED ${SuggestScreen.yearVal}");
+      } else if (SuggestScreen.genreVal != null &&
+          SuggestScreen.genreVal != "Choose a Genre") {
+        //only genre selected
+        url =
+            "https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${pageNum.toString()}&with_genres=${SuggestScreen.genreVal}";
 
-    }else if(SuggestScreen.radioVal == "Genre"){
-
-    if(SuggestScreen.genreVal != null){
-
-      url="https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${SuggestScreen.genreVal}";
-
-
-      print('GENRE ID==>>> ' + SuggestScreen.genreVal);
-    }
-
-
-
-    }else{
+        print("ONLY GENRE SELECTED");
+      } else if (SuggestScreen.yearVal != null &&
+          SuggestScreen.yearVal != "Choose a Year") {
+        // only year selected
+        print("ONLY YEAR SELECTED!");
+        url =
+            "https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${pageNum.toString()}&year=${SuggestScreen.yearVal}";
+      }
+    } else {
       print("radioVal değerine ulaşılamadı");
     }
 
@@ -68,14 +76,11 @@ class _TmdbAPIState extends State<TmdbAPI> {
 
     detailID = movie.results[movID].id;
     urlDetail =
-    "https://api.themoviedb.org/3/movie/${detailID.toString()}?api_key=2050b4781551574ea11b686357c54ca3&language=en-US";
+        "https://api.themoviedb.org/3/movie/${detailID.toString()}?api_key=2050b4781551574ea11b686357c54ca3&language=en-US";
 
     var responseDetail = await http.get(urlDetail);
     var decodedDetailsJson = json.decode(responseDetail.body);
     movieDetails = MovieDetails.fromJson(decodedDetailsJson);
-
-
-
 
     return movieDetails;
   }
@@ -114,15 +119,17 @@ class _TmdbAPIState extends State<TmdbAPI> {
                     // app bar kapandıktan sonra banner gibi üstte görünmeye devam eder
                     flexibleSpace: FlexibleSpaceBar(
                       title: Container(
-                          color: Colors.pink.withOpacity(0.6),
-                          padding: EdgeInsets.all(2),
-                          child: Text(
-                            movie.data.title,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 3,
-                            softWrap: true,
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                          ),),
+                        color: Colors.pink.withOpacity(0.6),
+                        padding: EdgeInsets.all(2),
+                        child: Text(
+                          movie.data.title,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                          softWrap: true,
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                       centerTitle: true,
                       background: Image.network(
                         movie.data.posterPath != null
@@ -157,7 +164,7 @@ void showToast(
     duration: 3,
     gravity: 10,
     textColor: Colors.white,
-    backgroundColor: Colors.purple,
+    backgroundColor: Colors.pink,
   );
 }
 
@@ -183,12 +190,19 @@ List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
                 "Add to Watchlist",
                 style: TextStyle(color: Colors.white),
               ),
-              leading: Icon(Icons.live_tv,color: Colors.white,),
-              trailing: Icon(Icons.add,color: Colors.white,))),
+              leading: Icon(
+                Icons.live_tv,
+                color: Colors.white,
+              ),
+              trailing: Icon(
+                Icons.add,
+                color: Colors.white,
+              ))),
     ),
     SizedBox(
-      height: 5,
+      height: 2,
     ),
+    Divider(),
     Container(
       width: 200,
       child: Center(
@@ -197,21 +211,55 @@ List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
           overflow: TextOverflow.ellipsis,
           maxLines: 15,
           softWrap: true,
-          style: TextStyle( fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
     ),
     SizedBox(
-      height: 5,
+      height: 2,
+    ),
+    Divider(),
+    Container(
+      color: Colors.pink.shade500,
+      alignment: Alignment.center,
+      child: ListTile(
+        title: Text(
+          "Genres",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    ),
+    Container(
+      color: Colors.white,
+      alignment: Alignment.center,
+      child: ListTile(
+        title: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: mov.genres
+                    .map((map) => Align(
+                        alignment: Alignment.center,
+                        child: Chip(
+                          elevation: 4,
+                          backgroundColor: Colors.purple,
+                          label: Text(
+                            map.name,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )))
+                    .toList())),
+      ),
     ),
     Container(
       color: Colors.pink.shade500,
       alignment: Alignment.center,
       child: ListTile(
         title: Text(
-          "Avg Point: " + mov.voteAverage.toString(),
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold),
+          "Spoken Languages ",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
       ),
@@ -220,12 +268,21 @@ List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
       color: Colors.white,
       alignment: Alignment.center,
       child: ListTile(
-        title: Text(
-          "Duration: " + mov.runtime.toString() + " mins",
-          style: TextStyle(
-               color: Colors.purple, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ),
+        title: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: mov.spokenLanguages
+                    .map((map) => Chip(
+                          elevation: 4,
+                          backgroundColor: Colors.purple,
+                          label: Text(
+                            map.name,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ))
+                    .toList())),
       ),
     ),
     Container(
@@ -233,21 +290,18 @@ List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
       alignment: Alignment.center,
       child: ListTile(
         title: Text(
-          "Language: " + mov.spokenLanguages[0].name.toString(),
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold),
+          "Duration: "+mov.runtime.toString() + " mins",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
       ),
-    ),
-    Container(
+    ), Container(
       color: Colors.white,
       alignment: Alignment.center,
       child: ListTile(
         title: Text(
           "Released: " + mov.releaseDate.toIso8601String().substring(0, 10),
-          style: TextStyle(
-               color: Colors.purple, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
       ),
@@ -257,12 +311,12 @@ List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
       alignment: Alignment.center,
       child: ListTile(
         title: Text(
-          "Genre: " + mov.genres[0].name,
-          style: TextStyle(
-               color: Colors.white, fontWeight: FontWeight.bold),
+          "Average Vote: " + mov.voteAverage.toString(),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
       ),
     ),
+
   ];
 }
