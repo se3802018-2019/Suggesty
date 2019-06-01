@@ -9,6 +9,7 @@ class SuggestScreen extends StatefulWidget {
   static String radioVal;
   static String genreVal;
   static String yearVal;
+  bool genreVisibility =false;
 
   @override
   _SuggestScreenState createState() => _SuggestScreenState();
@@ -75,6 +76,13 @@ class _SuggestScreenState extends State<SuggestScreen> {
                   value: "Random",
                   groupValue: radioValue,
                   onChanged: (secim) {
+
+                    print("secim => "+secim);
+
+                      setState(() {
+                        widget.genreVisibility = false;
+                      });
+
                     setState(() {
                       radioValue = secim;
                       SuggestScreen.radioVal = secim;
@@ -87,12 +95,20 @@ class _SuggestScreenState extends State<SuggestScreen> {
                 child: RadioListTile(
                   activeColor: Colors.purple,
                   title: Text(
-                    "Genre",
+                    "By Genre",
                     style: TextStyle(fontSize: 20),
                   ),
                   value: "Genre",
                   groupValue: radioValue,
                   onChanged: (secim) {
+
+
+                      setState(() {
+                        widget.genreVisibility = true;
+                      });
+
+
+
                     setState(() {
                       SuggestScreen.radioVal = secim;
                       radioValue = secim;
@@ -128,24 +144,27 @@ class _SuggestScreenState extends State<SuggestScreen> {
                           print("MAP: " + map.name);
                         });
 
-                        return DropdownButton(
-                            hint: Text("Choose a Genre"),
-                            value: genreValue,
-                            onChanged: (genre) {
-                              print("SEÇİLEN ITEM => " + genre.toString());
-                              SuggestScreen.genreVal = genre.toString();
-                              print("static genreVal => " +
-                                  SuggestScreen.genreVal);
-                              setState(() {
-                                genreValue = genre;
-                              });
-                            },
-                            items: snapGenre.data.genres
-                                .map((map) => DropdownMenuItem(
-                                      child: Text(map.name),
-                                      value: map.id,
-                                    ))
-                                .toList());
+                        return Visibility(
+                          visible: widget.genreVisibility,
+                          child: DropdownButton(
+                              hint: Text("Choose a Genre"),
+                              value: genreValue,
+                              onChanged: (genre) {
+                                print("SEÇİLEN ITEM => " + genre.toString());
+                                SuggestScreen.genreVal = genre.toString();
+                                print("static genreVal => " +
+                                    SuggestScreen.genreVal);
+                                setState(() {
+                                  genreValue = genre;
+                                });
+                              },
+                              items: snapGenre.data.genres
+                                  .map((map) => DropdownMenuItem(
+                                        child: Text(map.name),
+                                        value: map.id,
+                                      ))
+                                  .toList()),
+                        );
                       }
                     }),
               ),
@@ -164,24 +183,27 @@ class _SuggestScreenState extends State<SuggestScreen> {
                         );
                       } else if (snapYear.connectionState ==
                           ConnectionState.done) {
-                        return DropdownButton(
-                            hint: Text("Choose a Year"),
-                            value: yearVal,
-                            onChanged: (year) {
-                              print("SEÇİLEN YIL => " + year.toString());
-                              SuggestScreen.yearVal = year.toString();
-                              print("static genreVal => " +
-                                  SuggestScreen.yearVal);
-                              setState(() {
-                                yearVal = year.toString();
-                              });
-                            },
-                            items: snapYear.data
-                                .map((map) => DropdownMenuItem(
-                                      child: Text(map.toString()),
-                                      value: map.toString(),
-                                    ))
-                                .toList());
+                        return Visibility(
+                          visible: widget.genreVisibility,
+                          child: DropdownButton(
+                              hint: Text("Choose a Year"),
+                              value: yearVal,
+                              onChanged: (year) {
+                                print("SEÇİLEN YIL => " + year.toString());
+                                SuggestScreen.yearVal = year.toString();
+                                print("static genreVal => " +
+                                    SuggestScreen.yearVal);
+                                setState(() {
+                                  yearVal = year.toString();
+                                });
+                              },
+                              items: snapYear.data
+                                  .map((map) => DropdownMenuItem(
+                                        child: Text(map.toString()),
+                                        value: map.toString(),
+                                      ))
+                                  .toList()),
+                        );
                       }
                     }),
               ),

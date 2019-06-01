@@ -36,7 +36,7 @@ class _TmdbAPIState extends State<TmdbAPI> {
   Future<MovieDetails> getMovies() async {
     var random = new Random();
     if (SuggestScreen.radioVal == "Random") {
-      pageNum = random.nextInt(50);
+      pageNum = random.nextInt(51);
       url =
           "https://api.themoviedb.org/3/discover/movie?api_key=2050b4781551574ea11b686357c54ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${pageNum.toString()}";
     } else if (SuggestScreen.radioVal == "Genre") {
@@ -290,12 +290,13 @@ List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
       alignment: Alignment.center,
       child: ListTile(
         title: Text(
-          "Duration: "+mov.runtime.toString() + " mins",
+          "Duration: " + mov.runtime.toString() + " mins",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
       ),
-    ), Container(
+    ),
+    Container(
       color: Colors.white,
       alignment: Alignment.center,
       child: ListTile(
@@ -317,6 +318,5 @@ List<Widget> sabitListeElemanlari(MovieDetails mov, BuildContext context) {
         ),
       ),
     ),
-
   ];
 }
