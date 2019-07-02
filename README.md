@@ -8,8 +8,8 @@ Flutter version have to be at least (Channel stable, v1.2.1, on Microsoft Window
 
 To run/test this project you have to have an android emulator or a android phone. IntelliJ IDEA is recomended to open this project. If you have another editors such as Android Studio or Visual Studio Code before you start the project please make sure you installed everything correctly by running “flutter doctor” command in the console. 
 
-# External Libraries:
-http: ^0.12.0+2
-cloud_firestore: ^0.8.2
-toast: ^0.1.3 
+# External Libraries:  
+http: ^0.12.0+2<br/>  
+cloud_firestore: ^0.8.2<br/>  
+toast: ^0.1.3  <br/>  
 
